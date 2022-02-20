@@ -1,6 +1,6 @@
 class SessionsController < ApplicationController
   def create
-    user = User.find_by(email: params[:email])
+    user = User.find_by(email: params[:email], allowed_origin_id: request.headers["Origin"])
     if user.empty?
       render json: { jwt: nil, errors: ["Username/password combination invalid."] }
       return

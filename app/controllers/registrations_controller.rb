@@ -1,9 +1,11 @@
-require 'byebug'
 
 class RegistrationsController < ApplicationController
   def create
-    debugger
-    user = User.new(email: params[:email], password: params[:password])
+    user = User.new(
+      email: params[:email],
+      password: params[:password],
+      allowed_origin_id: origin.id
+    )
     if user.valid?
       user.save!
       sign_in(user)

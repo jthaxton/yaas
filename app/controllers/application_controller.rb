@@ -1,13 +1,12 @@
 class ApplicationController < ActionController::API
   respond_to :json
   before_action :process_token
+  before_action :origin
 
-  def cor
-    puts "HEREEEEEEEE"
-    headers["Access-Control-Allow-Origin"]  = "*"
-    headers["Access-Control-Allow-Methods"] = %w{GET POST PUT DELETE}.join(",")
-    headers["Access-Control-Allow-Headers"] = %w{Origin Accept Content-Type X-Requested-With X-CSRF-Token}.join(",")
-    head(:ok) if request.request_method == "OPTIONS"
+  def origin
+    origin = AllowedOrigin.find_by(id: request.headers["Origin"])
+    head :unauthorized if  origin.nil?
+    origin
   end
 
   def process_token
