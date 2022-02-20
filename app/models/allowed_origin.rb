@@ -1,0 +1,2 @@
+class AllowedOrigin < ApplicationRecord
+end

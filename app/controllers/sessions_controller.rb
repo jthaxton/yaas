@@ -2,33 +2,33 @@ class SessionsController < ApplicationController
   def create
     user = User.find_by(email: params[:email])
     if user.empty?
-      render json: { user: nil, session: session, errors: ["Username/password combination invalid."] }
+      render json: { jwt: nil, errors: ["Username/password combination invalid."] }
       return
     end
 
     if user.valid_password?(params[:password])
       sign_in(user)
-      render json: { user: user.serialized, session: session, errors: [] }
+      jwt = user.generate_jwt
+      render json: { jwt: jwt.to_json, errors: [] }
     else
-      render json: { user: nil, session: session, errors: ["Username/password combination invalid."] }
+      render json: { jwt: nil, errors: ["Username/password combination invalid."] }
     end
   end
 
   def show
-    if current_user
-      render json: { user: user.serialized, session: session, errors: [] }
+    if jwt_current_user
+      render json: { jwt: jwt_current_user.generate_jwt.to_json, errors: [] }
     else
-      render json: { user: user.serialized, session: session, errors: ["No current_user found."] }
+      render json: { jwt: nil, errors: ["No current_user found."] }
     end
   end
-
 
   def destroy
     if current_user
       sign_out(current_user)
-      render json: { user: nil, session: session, errors: [] }
+      render json: { jwt: nil, errors: [] }
     else
-      render json: { user: nil, session: session, errors: ["No current_user found."] }
+      render json: { jwt: nil, errors: ["No current_user found."] }
     end
   end
 end
